@@ -1,7 +1,23 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Client from '../components/Client';
 import Editor from '../components/Editor';
+import { initSocket } from '../socket';
+import { ACTIONS } from '../Action';
+import { useLocation } from 'react-router-dom';
 const EditorPage = () => {
+  const socketRef = useRef(null);
+  const location = useLocation();
+  useEffect(() => {
+    const init = async () => {
+      socketRef.current = await initSocket();
+      //emit是发送事件:JOIN
+      // socketRef.current.emit(ACTIONS.JOIN, {
+      //   username: location.state?.username,
+      //   roomId,
+      // });
+    }
+    init();
+  }, []);
   const [clients, setClients] = useState([{
     socketid: 1,
     username: 'xxxx',
@@ -46,7 +62,7 @@ const EditorPage = () => {
       </div>
 
 
-      <div className="editorWrap" style={{ backgroundColor: 'white' }}> 
+      <div className="editorWrap" style={{ backgroundColor: 'white' }}>
         <Editor />
       </div>
     </div>
