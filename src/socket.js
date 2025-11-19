@@ -5,7 +5,7 @@ export const initSocket = async () => {
         
        
         // 最大重连次数
-        reconnectionAttempt: 'Infinity',
+        reconnectionAttempt: Infinity,
         // 重新连接延迟
         reconnectionDelay: 1000,
         timeout: 10000,
