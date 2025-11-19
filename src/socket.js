@@ -2,8 +2,8 @@ import { io } from 'socket.io-client';
 
 export const initSocket = async () => {
     const options = {
-        // 强制新连接
-        forceNew: true,
+        
+       
         // 最大重连次数
         reconnectionAttempt: 'Infinity',
         // 重新连接延迟

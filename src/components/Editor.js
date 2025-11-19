@@ -1,16 +1,19 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef ,useState} from 'react';
 import Codemirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/dracula.css';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/edit/closetag';
 import 'codemirror/addon/edit/closebrackets';
-
-const Editor = () => {
-
+import { ACTIONS } from '../Action'
+const Editor = ({ socketRef, roomId, onCodeChange }) => {
+    const editorRef = useRef(null);
+ 
+   
     useEffect(() => {
+      if (!socketRef?.current) return; // 防止 null 报错
         async function init() {
-            const editor = Codemirror.fromTextArea(document.getElementById('realtimeEditor'), {
+            editorRef.current = Codemirror.fromTextArea(document.getElementById('realtimeEditor'), {
                 mode: {
                     name: 'javascript',
                     json: true,
@@ -20,9 +23,32 @@ const Editor = () => {
                 autoCloseBrackets: true,
                 lineNumbers: true,
             })
+
+            editorRef.current.on('change', (instance, changes) => {
+                const { origin } = changes;
+                const code = instance.getValue();
+                onCodeChange(code);
+                if (origin !== 'setValue') {
+                    socketRef.current.emit(ACTIONS.CODE_CHANGE, {
+                        roomId,
+                        code,
+                    });
+                }
+            });
+
+            socketRef.current.on(ACTIONS.CODE_CHANGE, ({ code }) => {
+                console.log(code,'hhhhh');
+                if (code) {
+                    editorRef.current.setValue(code);
+                }
+            });
         }
         init();
-    }, [])
+        return ()=>{
+            socketRef.current.off(ACTIONS.CODE_CHANGE);
+        }
+    }, [socketRef.current])
+
     return (
 
         <textarea id='realtimeEditor'>
