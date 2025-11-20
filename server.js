@@ -14,6 +14,7 @@ const io = new Server(server, {
     origin: "*",
     methods: ["GET", "POST"],
   },
+   transports: ["websocket", "polling"]
   pingTimeout: 60000, // 可选，让socket延迟更容忍
 });
 //作用：将 React 应用的静态文件（如 CSS、JavaScript、图片等）从 build 目录提供给客户端。
