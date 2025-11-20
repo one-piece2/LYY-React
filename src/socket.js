@@ -12,5 +12,5 @@ export const initSocket = async () => {
         // 强制使用 WebSocket 传输
         transports: ['websocket'],
     };
-    return io("https://lyyyyds.zeabur.app",options);
+    return io("/",options);
 };
