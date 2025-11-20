@@ -9,14 +9,23 @@ const { ACTIONS } = require('./src/Action');
 //作用：创建一个 HTTP 服务器实例，将 Express 应用实例 app 作为参数传递。
 const server = http.createServer(app);
 //创建 Socket.IO 服务器实例 io，将 HTTP 服务器实例 server 作为参数传递。
-const io = new Server(server); 
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+  pingTimeout: 60000, // 可选，让socket延迟更容忍
+});
 //作用：将 React 应用的静态文件（如 CSS、JavaScript、图片等）从 build 目录提供给客户端。
 //这允许客户端直接访问这些文件，而不需要服务器端的额外处理。
 app.use(express.static('build'));
 //作用：当客户端请求任何路由时，都返回 React 应用的 index.html 文件。
 //这是 React 单页应用的关键，确保所有路由都由 React 处理，而不是由服务器处理。
-app.use((req, res, next) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// app.use((req, res, next) => {
+//     res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 const userSocketMap = {};
 function getAllConnectedClients(roomId) {
